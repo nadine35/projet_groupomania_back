@@ -1,5 +1,8 @@
 const http = require('http');
 const app = require('./app');
+const express = required('express');
+const app = express();
+require('dotenv').config();//config du fichier .env
 
 const normalizePort = val => {
   const port = parseInt(val, 10);
