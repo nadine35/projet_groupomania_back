@@ -1,19 +1,20 @@
 const express = require("express");
 const app = express();
-const userRoutes = require("./routes/user.routes");
-// require("dotenv").config({path: './configuration'}); //config du fichier .env
-require('./config/db')
-const bodyParser = require("body-parser");
+
+require("dotenv").config(); //config du fichier .env
+
+require('./config/db');
+
 const mongoose = require('mongoose');//bdd mongo
 //routes
-app.use('/api/user', userRoutes);
-
-// require('./config/db');
-const path = require("path"); //donne acces au chemin du système de fichier
-
 app.use(express.json());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+
+const userRoutes = require("./routes/user.routes");
+
+// const path = require("path"); //donne acces au chemin du système de fichier
+
+
+
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -25,8 +26,10 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, DELETE, PATCH, OPTIONS"
   );
-  res.setHeader("Cross-Orifin-Ressource-Policy", "cross-origin");
+  res.setHeader("Cross-Origin-Ressource-Policy", "cross-origin");
   next();
 });
+
+app.use('/api/user', userRoutes);
 
 module.exports = app;
