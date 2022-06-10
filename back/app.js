@@ -15,7 +15,6 @@ const userRoutes = require("./routes/user.routes");
 
 
 
-
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(

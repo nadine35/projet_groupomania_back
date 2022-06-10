@@ -6,7 +6,7 @@ mongoose
       "@cluster0.j6l7m.mongodb.net/test",
     {
       useNewUrlParser: true,
-      useUnifiedTopology: true,
+      useUnifiedTopology: true
     }
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
