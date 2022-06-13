@@ -1,13 +1,18 @@
 const express = require("express");
 const app = express();
 
+const cookieParser = require ('cookie-parser');
+const{checkUser, requireAuth}= require('./middleware/auth.middleware')
 require("dotenv").config(); //config du fichier .env
 
 require('./config/db');
 
+
 const mongoose = require('mongoose');//bdd mongo
 //routes
+
 app.use(express.json());
+
 
 const userRoutes = require("./routes/user.routes");
 
@@ -29,6 +34,15 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(cookieParser());
+//jwt
+app.get('*', checkUser);
+app.get('/jwtid', requireAuth, (req, res) => {
+  res.status(200).send(res.locals.user._id)
+});
+
+
+//routes
 app.use('/api/user', userRoutes);
 
 module.exports = app;
