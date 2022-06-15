@@ -15,6 +15,7 @@ app.use(express.json());
 
 
 const userRoutes = require("./routes/user.routes");
+const postRoutes = require("./routes/post.routes");
 
 // const path = require("path"); //donne acces au chemin du système de fichier
 
@@ -44,5 +45,6 @@ app.get('/jwtid', requireAuth, (req, res) => {
 
 //routes
 app.use('/api/user', userRoutes);
+app.use('/api/post', postRoutes);
 
 module.exports = app;
