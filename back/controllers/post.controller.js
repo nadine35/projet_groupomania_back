@@ -4,12 +4,11 @@ const UserModel = require("../models/user.model");
 const { uploadErrors } = require("../utils/errors.utils");
 const ObjectId = require("mongoose").Types.ObjectId; //reconnaitre les id
 
-// les 4 fonctions déclarées dans notre route elles fonctionnent
 module.exports.readPost = (req, res) => {
   PostModel.find((err, docs) => {
     if (!err) res.send(docs);
     else console.log("Error to get data :" + err);
-  });
+  }).sort({ createdAt: -1 }); //affiche message du + récent au plus ancien
 };
 
 module.exports.createPost = async (req, res) => {
@@ -79,7 +78,7 @@ module.exports.likePost = async (req, res) => {
     await UserModel.findByIdAndUpdate(
       req.body.id,
       {
-        //rajout au tableau des likes de l'user
+        // rajout au tableau des likes de l'user
         $addToSet: { likes: req.params.id },
       },
       { new: true },
@@ -94,16 +93,6 @@ module.exports.likePost = async (req, res) => {
 };
 
 module.exports.unlikePost = async (req, res) => {
-  if (!ObjectId.isValid(req.params.id))
-    return res.status(400).send("ID unknown : " + req.params.id);
-
-  PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
-    if (!err) res.send(docs);
-    else console.log("Delete error : " + err);
-  });
-};
-
-module.exports.likePost = async (req, res) => {
   if (!ObjectId.isValid(req.params.id))
     return res.status(400).send("ID unknown : " + req.params.id);
   console.log(req.params.id);
@@ -124,7 +113,7 @@ module.exports.likePost = async (req, res) => {
     await UserModel.findByIdAndUpdate(
       req.body.id,
       {
-        //enlève au tableau des likes de l'user
+        // enlève au tableau des likes de l'user
         $pull: { likes: req.params.id },
       },
       { new: true },
@@ -167,16 +156,18 @@ module.exports.commentPost = (req, res) => {
 };
 module.exports.editCommentPost = (req, res) => {
   if (!ObjectId.isValid(req.params.id))
-    // le rq params id est-il connu ?
+    // le req params id est-il connu ? On le récupère si ok
     return res.status(400).send("ID unknown : " + req.params.id);
 
   try {
     return PostModel.findById(req.params.id, (err, docs) => {
-      const theComment = docs.comments.find((comment) =>
+      // on a identifié un article qui contient 1 ou plusieurs commentaires
+      const theComment = docs.comments.find((comment) =>// on pointe l'array commentaires
+      // id de l'article dans l'url
         comment._id.equals(req.body.commentId)
       );
       if (!theComment) return res.status(404).send("Comment not found");
-      theComment.text = req.body.text;
+      theComment.text = req.body.text;// on édite le text
 
       return docs.save((err) => {
         if (!err) return res.status(200).send(docs);
@@ -189,6 +180,26 @@ module.exports.editCommentPost = (req, res) => {
 };
 module.exports.deleteCommentPost = (req, res) => {
   if (!ObjectId.isValid(req.params.id))
-    // le rq params id est-il connu ?
+  // delete d'un commentaire qui est dans le post
     return res.status(400).send("ID unknown : " + req.params.id);
+
+  try {
+    return PostModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        $pull: {
+          comments: {//on retire le commentaire qui a l'id suivante
+            _id: req.body.commentId,
+          },
+        },
+      },
+      { new: true },
+      (err, docs) => {
+        if (!err) return res.send(docs);
+        else return res.status(400).send(err);
+      }
+    );
+  } catch (err) {
+    return res.status(400).send(err);
+  }
 };
