@@ -11,21 +11,12 @@ module.exports.readPost = (req, res) => {
   }).sort({ createdAt: -1 }); //affiche message du + récent au plus ancien
 };
 
-module.exports.createPost = async (req, res) => {
-  //on incrémente notre postModel
-  const newPost = new postModel({
-    posterId: req.body.posterId,
-    message: req.body.message,
-    likers: [],
-    comments: [],
-  });
-  try {
-    const post = await newPost.save();
-    return res.status(201).json(post);
-  } catch (err) {
-    return res.status(400).send(err);
-  }
-};
+
+
+
+
+
+  
 
 module.exports.updatePost = (req, res) => {
   // vérifier l'id que l'on passe en paramètre

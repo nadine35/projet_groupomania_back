@@ -1,14 +1,17 @@
 const router = require("express").Router();
 const postController = require('../controllers/post.controller');
-
+const multer = require("multer");
+const upload = multer();
 
 // crud
 
-// etape 1 : creer un post 
-router.post("/", postController.createPost);
 
 // afficher tous les post
 router.get('/', postController.readPost);
+// etape 1 : creer un post et ajout imade dans post
+router.post("/", upload.single("file"), postController.createPost);
+
+
 
 // modifier un post
 router.put('/:id', postController.updatePost);
