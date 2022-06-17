@@ -1,66 +1,45 @@
 const postModel = require("../models/post.model");
 const PostModel = require("../models/post.model");
 const UserModel = require("../models/user.model");
+const { post } = require("../routes/post.routes");
 const { uploadErrors } = require("../utils/errors.utils");
+const fs = require('fs');//file system donne accès aux fichiers
+
+
 const ObjectId = require("mongoose").Types.ObjectId; //reconnaitre les id
 
-module.exports.readPost = (req, res) => {
+module.exports.readPost = (req, res, next) => {
   PostModel.find((err, docs) => {
     if (!err) res.send(docs);
     else console.log("Error to get data :" + err);
   }).sort({ createdAt: -1 }); //affiche message du + récent au plus ancien
 };
-module.exports.createPost = async (req, res) => {
-  let fileName;
 
-  if (req.file !== null) {
-    try {
-      if (
-        req.file.detectedMimeType != "image/jpg" &&
-        req.file.detectedMimeType != "image/png" &&
-        req.file.detectedMimeType != "image/jpeg"
-      )
-        throw Error("invalid file");
+module.exports.createPost =  (req, res) => {
+  const postObject = JSON.parse(req.body.post);
 
-      if (req.file.size > 500000) throw Error("max size");
-    } catch (err) {
-      const errors = uploadErrors(err);
-      return res.status(201).json({ errors });
-    }
-    fileName = req.body.posterId + Date.now() + ".jpg";
-
-    await pipeline(
-      req.file.stream,
-      fs.createWriteStream(
-        `${__dirname}/../client/public/uploads/posts/${fileName}`
-      )
-    );
-  }
-
-  const newPost = new postModel({
-    posterId: req.body.posterId,
-    message: req.body.message,
-    picture: req.file !== null ? "./uploads/posts/" + fileName : "",
-    video: req.body.video,
-    likers: [],
-    comments: [],
+    const post = new Post({
+    ...postObject,
+    imageUrl:`${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   });
-
-  try {
-    const post = await newPost.save();
-    return res.status(201).json(post);
-  } catch (err) {
-    return res.status(400).send(err);
-  }
+  post.save()
+  .then(
+    ()=>{
+      res.status(201).json({
+        message: 'Post saved successfully!'
+      })
+    }
+  ).catch(
+    (error)=>{
+      // console.log('pb lors de la création') console.log()
+      res.status(400).json({
+        error: error, message : 'pb lors de la création'
+      });
+    }
+  );
 };
 
-
-
-
-
-  
-
-module.exports.updatePost = (req, res) => {
+ module.exports.updatePost = (req, res) => {
   // vérifier l'id que l'on passe en paramètre
   if (!ObjectId.isValid(req.params.id))
     return res.status(400).send("ID unknown : " + req.params.id);

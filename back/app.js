@@ -7,7 +7,7 @@ require("dotenv").config(); //config du fichier .env
 
 require('./config/db');
 
-
+const path = require('path');//donne acces au chemin du système de fichier
 const mongoose = require('mongoose');//bdd mongo
 //routes
 
@@ -44,7 +44,9 @@ app.get('/jwtid', requireAuth, (req, res) => {
 
 
 //routes
+app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/user', userRoutes);
 app.use('/api/post', postRoutes);
+app.use('/api/auth', userRoutes);
 
 module.exports = app;
