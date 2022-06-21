@@ -7,11 +7,11 @@ const Home = () => {
     <div>
       <Logo />
       <Navigation />
-      <ul className="inscription">
+      {/* <ul className="inscription">
           <input type="text" />
       </ul>
       <h2>Inscription</h2>
-      <h2>Connexion</h2>
+      <h2>Connexion</h2> */}
     </div>
   );
 };

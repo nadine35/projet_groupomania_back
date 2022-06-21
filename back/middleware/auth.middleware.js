@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
 const UserModel = require("../models/user.model");
 
+
+//test si l'utilisateur est connecté à chaque étape de sa navigation
 module.exports.checkUser = (req, res, next) => {
   const token = req.cookies.jwt;
   if (token) {

@@ -1,13 +1,25 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import  ReactDOM from 'react-dom';
+
+
+import {createRoot}from "react-dom/client";
+
 import App from './App';
+import './styles/index.scss';
 
+const rootElement = document.getElementById("root");
+const root = createRoot(rootElement);
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(//on fait un rendu react
-  <React.StrictMode>
+root.render(
+
     <App />
-  </React.StrictMode>
+
 );
 
 
+// ReactDOM.render( 
+//           <App />, //composant le + haut de l'appli   
+//     document.getElementById('root')
+//   );
+
+ 

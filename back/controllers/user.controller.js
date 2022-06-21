@@ -3,7 +3,7 @@ const ObjectId = require("mongoose").Types.ObjectId; //reconnaitre les id
 
 module.exports.getAllUsers = async (req, res) => {
   const users = await UserModel.find().select("-password"); //tu le trouves et tu prends tout sauf
-  //le password
+  //enlève le password
   return res.status(200).json(users);
 };
 

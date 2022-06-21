@@ -3,17 +3,19 @@ const app = express();
 
 const cookieParser = require ('cookie-parser');
 const{checkUser, requireAuth}= require('./middleware/auth.middleware')
-require("dotenv").config(); //config du fichier .env
+require("dotenv").config(); //config du fichier .env bon chemin ?
 
 require('./config/db');
 
 const path = require('path');//donne acces au chemin du système de fichier
 const mongoose = require('mongoose');//bdd mongo
+
+
 //routes
 
 app.use(express.json());
 
-
+// toutes les routes qui ont unlien avec le user
 const userRoutes = require("./routes/user.routes");
 const postRoutes = require("./routes/post.routes");
 
@@ -35,7 +37,13 @@ app.use((req, res, next) => {
   next();
 });
 
+
+//lire url ? A verif ou enlever
+app.use(express.urlencoded({extended:true}))
+
+// cookie
 app.use(cookieParser());
+
 //jwt
 app.get('*', checkUser);
 app.get('/jwtid', requireAuth, (req, res) => {
